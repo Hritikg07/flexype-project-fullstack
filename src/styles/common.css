@@ -66,3 +66,12 @@ button:hover {
     text-align: center;
   }
 }
+
+.success {
+  border-left: 4px solid #2e7d32;
+  background-color: #f1f8f4;
+}
+
+.success strong {
+  color: #2e7d32;
+}

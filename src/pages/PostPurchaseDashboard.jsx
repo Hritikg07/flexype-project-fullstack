@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "../styles/dashboard.css";
 import { fetchOrder } from "../services/orderService";
+
 import OrderSummary from "../components/OrderSummary";
 import OrderStatus from "../components/OrderStatus";
 import ProtectionPlan from "../components/ProtectionPlan";
@@ -13,13 +14,26 @@ function PostPurchaseDashboard() {
   const [loading, setLoading] = useState(true);
   const [orderStatus, setOrderStatus] = useState("SHIPPED");
   const [showProtection, setShowProtection] = useState(true);
+  const [hasProtection, setHasProtection] = useState(false);
+  const [protectionAdded, setProtectionAdded] = useState(false);
 
- useEffect(() => {
-  fetchOrder("ORD123456").then(data => {
-    setOrderStatus(data.status);
-    setLoading(false);
-  });
-}, []);
+  useEffect(() => {
+    fetchOrder("ORD123456").then((data) => {
+      setOrderStatus(data.status);
+      setHasProtection(data.addons?.protection || false);
+      setLoading(false);
+    });
+  }, []);
+
+  // Optional: auto-hide success message after 5 seconds
+  useEffect(() => {
+    if (protectionAdded) {
+      const timer = setTimeout(() => {
+        setProtectionAdded(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [protectionAdded]);
 
   if (loading) {
     return (
@@ -39,8 +53,26 @@ function PostPurchaseDashboard() {
       <OrderSummary />
       <OrderStatus currentStatus={orderStatus} />
 
-      {orderStatus !== "DELIVERED" && showProtection && (
-        <ProtectionPlan onDismiss={() => setShowProtection(false)} />
+      {/* ✅ Success feedback */}
+      {protectionAdded && (
+        <div className="card success">
+          <strong>Protection added</strong>
+          <p>
+            Your purchase is now covered. You can manage this anytime from your
+            order settings.
+          </p>
+        </div>
+      )}
+
+      {/* ✅ Protection plan (only if not already added) */}
+      {orderStatus !== "DELIVERED" && showProtection && !hasProtection && (
+        <ProtectionPlan
+          onDismiss={() => setShowProtection(false)}
+          onAdd={() => {
+            setHasProtection(true);
+            setProtectionAdded(true);
+          }}
+        />
       )}
 
       {orderStatus === "PLACED" && <DeliveryUpgrade />}
@@ -52,4 +84,6 @@ function PostPurchaseDashboard() {
 }
 
 export default PostPurchaseDashboard;
+
+
 

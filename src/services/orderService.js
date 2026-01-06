@@ -6,7 +6,8 @@ export async function fetchOrder(orderId) {
 }
 
 export async function addProtection(orderId) {
-  return fetch(`${BASE_URL}/${orderId}/add-protection`, {
+  const res = await fetch(`${BASE_URL}/${orderId}/add-protection`, {
     method: "POST"
   });
+  return res.json();
 }
