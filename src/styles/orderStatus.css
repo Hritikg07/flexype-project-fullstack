@@ -1,0 +1,29 @@
+
+
+
+.timeline {
+  list-style: none;
+  padding: 0;
+  margin-top: 12px;
+}
+
+.timeline li {
+  padding: 6px 0;
+  font-size: 14px;
+  color: #aaa;
+}
+
+.timeline li.done {
+  color: #2e7d32;
+}
+
+.timeline li.active {
+  color: #111;
+  font-weight: bold;
+}
+@media (max-width: 600px) {
+  .timeline li {
+    font-size: 13px;
+  }
+}
+
